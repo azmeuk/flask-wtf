@@ -7,11 +7,19 @@ from flask import request
 from wtforms import ValidationError
 
 RECAPTCHA_VERIFY_SERVER_DEFAULT = "https://www.google.com/recaptcha/api/siteverify"
+
+
+def _(s):
+    # Identity marker so Babel extracts the RECAPTCHA_ERROR_CODES strings;
+    # actual translation happens at validation time via field.gettext().
+    return s
+
+
 RECAPTCHA_ERROR_CODES = {
-    "missing-input-secret": "The secret parameter is missing.",
-    "invalid-input-secret": "The secret parameter is invalid or malformed.",
-    "missing-input-response": "The response parameter is missing.",
-    "invalid-input-response": "The response parameter is invalid or malformed.",
+    "missing-input-secret": _("The secret parameter is missing."),
+    "invalid-input-secret": _("The secret parameter is invalid or malformed."),
+    "missing-input-response": _("The response parameter is missing."),
+    "invalid-input-response": _("The response parameter is invalid or malformed."),
 }
 
 
@@ -49,11 +57,11 @@ class Recaptcha:
         if not response:
             raise ValidationError(field.gettext(self.message))
 
-        if not self._validate_recaptcha(response, remote_ip):
+        if not self._validate_recaptcha(response, remote_ip, field):
             field.recaptcha_error = "incorrect-captcha-sol"
             raise ValidationError(field.gettext(self.message))
 
-    def _validate_recaptcha(self, response, remote_addr):
+    def _validate_recaptcha(self, response, remote_addr, field):
         """Performs the actual validation."""
         try:
             private_key = current_app.config["RECAPTCHA_PRIVATE_KEY"]
@@ -80,6 +88,6 @@ class Recaptcha:
 
         for error in json_resp.get("error-codes", []):
             if error in RECAPTCHA_ERROR_CODES:
-                raise ValidationError(RECAPTCHA_ERROR_CODES[error])
+                raise ValidationError(field.gettext(RECAPTCHA_ERROR_CODES[error]))
 
         return False

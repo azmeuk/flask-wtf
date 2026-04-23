@@ -1,6 +1,14 @@
 Changes
 =======
 
+Version 1.x.x
+-------------
+
+Unreleased
+
+- Add a translation catalog for Flask-WTF's error messages (reCAPTCHA,
+  CSRF, file validators). :issue:`198` :issue:`583`
+
 Version 1.3.0
 -------------
 

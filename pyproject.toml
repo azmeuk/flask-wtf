@@ -60,6 +60,13 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/flask_wtf"]
+artifacts = ["src/flask_wtf/locale/**/*.mo"]
+
+[tool.hatch.build.hooks.custom]
+dependencies = [
+    "Babel>=2.6.0",
+    "setuptools; python_version>='3.12'",
+]
 
 [tool.hatch.version]
 path = "src/flask_wtf/__init__.py"

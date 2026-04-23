@@ -18,6 +18,20 @@ from werkzeug.exceptions import BadRequest
 from wtforms import ValidationError
 from wtforms.csrf.core import CSRF
 
+try:
+    from .i18n import translations as _translations
+except ImportError:
+    _translations = None
+
+
+def _(message, field=None):
+    if field is not None:
+        return field.gettext(message)
+    if _translations is not None:
+        return _translations.gettext(message)
+    return message
+
+
 __all__ = ("generate_csrf", "validate_csrf", "csrf_meta_tag", "CSRFProtect")
 logger = logging.getLogger(__name__)
 
@@ -65,7 +79,9 @@ def generate_csrf(secret_key=None, token_key=None):
     return g.get(field_name)
 
 
-def validate_csrf(data, secret_key=None, time_limit=None, token_key=None):
+def validate_csrf(
+    data, secret_key=None, time_limit=None, token_key=None, *, field=None
+):
     """Check if the given data is a valid CSRF token. This compares the given
     signed token to the one stored in the session.
 
@@ -76,6 +92,9 @@ def validate_csrf(data, secret_key=None, time_limit=None, token_key=None):
         ``WTF_CSRF_TIME_LIMIT`` or 3600 seconds (60 minutes).
     :param token_key: Key where token is stored in session for comparison.
         Default is ``WTF_CSRF_FIELD_NAME`` or ``'csrf_token'``.
+    :param field: Optional WTForms field whose ``gettext`` method is used to
+        translate the error message. When omitted, the module-level
+        translation catalog is used.
 
     :raises ValidationError: Contains the reason that validation failed.
 
@@ -99,22 +118,22 @@ def validate_csrf(data, secret_key=None, time_limit=None, token_key=None):
     time_limit = _get_config(time_limit, "WTF_CSRF_TIME_LIMIT", 3600, required=False)
 
     if not data:
-        raise ValidationError("The CSRF token is missing.")
+        raise ValidationError(_("The CSRF token is missing.", field))
 
     if field_name not in session:
-        raise ValidationError("The CSRF session token is missing.")
+        raise ValidationError(_("The CSRF session token is missing.", field))
 
     s = URLSafeTimedSerializer(secret_key, salt="wtf-csrf-token")
 
     try:
         token = s.loads(data, max_age=time_limit)
     except SignatureExpired as e:
-        raise ValidationError("The CSRF token has expired.") from e
+        raise ValidationError(_("The CSRF token has expired.", field)) from e
     except BadData as e:
-        raise ValidationError("The CSRF token is invalid.") from e
+        raise ValidationError(_("The CSRF token is invalid.", field)) from e
 
     if not hmac.compare_digest(session[field_name], token):
-        raise ValidationError("The CSRF tokens do not match.")
+        raise ValidationError(_("The CSRF tokens do not match.", field))
 
 
 def csrf_meta_tag(name=None, secret_key=None, token_key=None):
@@ -180,6 +199,7 @@ class _FlaskFormCSRF(CSRF):
                 self.meta.csrf_secret,
                 self.meta.csrf_time_limit,
                 self.meta.csrf_field_name,
+                field=field,
             )
         except ValidationError as e:
             logger.info(e.args[0])
@@ -290,12 +310,12 @@ class CSRFProtect:
 
         if request.is_secure and current_app.config["WTF_CSRF_SSL_STRICT"]:
             if not request.referrer:
-                self._error_response("The referrer header is missing.")
+                self._error_response(_("The referrer header is missing."))
 
             good_referrer = f"https://{request.host}/"
 
             if not same_origin(request.referrer, good_referrer):
-                self._error_response("The referrer does not match the host.")
+                self._error_response(_("The referrer does not match the host."))
 
         g.csrf_valid = True  # mark this request as CSRF valid
 

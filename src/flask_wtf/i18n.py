@@ -1,3 +1,6 @@
+from os.path import dirname
+from os.path import join
+
 from babel import support
 from flask import current_app
 from flask import request
@@ -5,6 +8,8 @@ from flask_babel import get_locale
 from wtforms.i18n import messages_path
 
 __all__ = ("Translations", "translations")
+
+_FLASK_WTF_LOCALE_PATH = join(dirname(__file__), "locale")
 
 
 def _get_translations():
@@ -22,9 +27,14 @@ def _get_translations():
     translations = getattr(request, "wtforms_translations", None)
 
     if translations is None:
+        locale = [get_locale()]
         translations = support.Translations.load(
-            messages_path(), [get_locale()], domain="wtforms"
+            _FLASK_WTF_LOCALE_PATH, locale, domain="flask_wtf"
         )
+        wtforms_translations = support.Translations.load(
+            messages_path(), locale, domain="wtforms"
+        )
+        translations.add_fallback(wtforms_translations)
         request.wtforms_translations = translations
 
     return translations

@@ -1,0 +1,81 @@
+# English translations for Flask-WTF.
+# Copyright (C) 2026 WTForms Team
+# This file is distributed under the same license as the Flask-WTF project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Flask-WTF VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-04-19 10:23+0200\n"
+"PO-Revision-Date: 2026-04-19 10:23+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: src/flask_wtf/csrf.py:112
+msgid "The CSRF token is missing."
+msgstr ""
+
+#: src/flask_wtf/csrf.py:115
+msgid "The CSRF session token is missing."
+msgstr ""
+
+#: src/flask_wtf/csrf.py:122
+msgid "The CSRF token has expired."
+msgstr ""
+
+#: src/flask_wtf/csrf.py:124
+msgid "The CSRF token is invalid."
+msgstr ""
+
+#: src/flask_wtf/csrf.py:127
+msgid "The CSRF tokens do not match."
+msgstr ""
+
+#: src/flask_wtf/csrf.py:303
+msgid "The referrer header is missing."
+msgstr ""
+
+#: src/flask_wtf/csrf.py:309
+msgid "The referrer does not match the host."
+msgstr ""
+
+#: src/flask_wtf/file.py:57
+msgid "This field is required."
+msgstr ""
+
+#: src/flask_wtf/file.py:96
+#, python-brace-format
+msgid "File does not have an approved extension: {extensions}"
+msgstr ""
+
+#: src/flask_wtf/file.py:103
+msgid "File does not have an approved extension."
+msgstr ""
+
+#: src/flask_wtf/file.py:150
+#, python-brace-format
+msgid "File must be between {min} and {max} bytes."
+msgstr ""
+
+#: src/flask_wtf/recaptcha/validators.py:19
+msgid "The secret parameter is missing."
+msgstr ""
+
+#: src/flask_wtf/recaptcha/validators.py:20
+msgid "The secret parameter is invalid or malformed."
+msgstr ""
+
+#: src/flask_wtf/recaptcha/validators.py:21
+msgid "The response parameter is missing."
+msgstr ""
+
+#: src/flask_wtf/recaptcha/validators.py:22
+msgid "The response parameter is invalid or malformed."
+msgstr ""
